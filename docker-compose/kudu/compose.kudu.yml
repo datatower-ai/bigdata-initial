@@ -1,0 +1,66 @@
+services:
+  kudu-master:
+    image: apache/kudu:1.17.0
+    container_name: kudu-master
+    ports:
+      - "7051:7051"
+      - "8051:8051"
+    command: ["master"]
+    volumes:
+      - kudu-master-volume:/var/lib/kudu
+    networks:
+      - datatower_network
+    environment:
+      - KUDU_MASTERS=kudu-master:7051
+      - >
+        MASTER_ARGS=
+        --fs_wal_dir=/var/lib/kudu/master
+        --default_num_replicas=1
+        --rpc_bind_addresses=0.0.0.0:7051
+        --rpc_advertised_addresses=${HOST_IP:?Please set HOST_IP environment variable}:7051
+        --webserver_port=8051
+        --webserver_advertised_addresses=${HOST_IP}:8051
+        --webserver_doc_root=/opt/kudu/www
+        --stderrthreshold=0
+        --use_hybrid_clock=false
+        --unlock_unsafe_flags=true
+  kudu-tserver:
+    image: apache/kudu:1.17.0
+    container_name: kudu-tserver
+    depends_on:
+      - kudu-master
+    ports:
+      - "7050:7050"
+      - "8050:8050"
+    command: ["tserver"]
+    volumes:
+      - kudu-tserver-volume:/var/lib/kudu
+    networks:
+      - datatower_network
+    environment:
+      - KUDU_MASTERS=kudu-master:7051
+      - >
+        TSERVER_ARGS=
+        --fs_wal_dir=/var/lib/kudu/tserver
+        --rpc_bind_addresses=0.0.0.0:7050
+        --rpc_advertised_addresses=${HOST_IP}:7050
+        --webserver_port=8050
+        --webserver_advertised_addresses=${HOST_IP}:8050
+        --webserver_doc_root=/opt/kudu/www
+        --stderrthreshold=0
+        --use_hybrid_clock=false
+        --unlock_unsafe_flags=true
+
+volumes:
+  kudu-master-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${SSD_DATA_BASE_DIR:?Please set SSD_DATA_BASE_DIR environment variable}/kudu-master/
+  kudu-tserver-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${SSD_DATA_BASE_DIR}/kudu-tserver/

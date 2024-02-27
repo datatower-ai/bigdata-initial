@@ -1,0 +1,28 @@
+include:
+  - ./redis/compose.redis.yml
+  - ./mysql/compose.mysql.yml
+  - ./kudu/compose.kudu.yml
+  - ./hdfs/compose.hdfs.yml
+  - ./metastore/compose.metastore.yml
+  - ./kafka/compose.kafka.yml
+  - ./trino/compose.trino.yml
+  - ./schema/compose.schema.yml
+  - ./flink/compose.flink.yml
+
+volumes:
+  hdfs_config_shared_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./hdfs/share_hdfs_config
+  hdfs_shared_volume:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./hdfs/share_hdfs
+
+networks:
+  datatower_network:
+    driver: bridge

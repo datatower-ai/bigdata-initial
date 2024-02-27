@@ -1,0 +1,21 @@
+services:
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: always
+    networks:
+      - datatower_network
+    volumes:
+      - redis-volume:/data
+      - ./redis.conf:/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    command: redis-server /etc/redis/redis.conf
+
+volumes:
+  redis-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${SSD_DATA_BASE_DIR}/redis/

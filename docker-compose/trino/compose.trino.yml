@@ -1,0 +1,18 @@
+services:
+  trino:
+    image: trinodb/trino:429
+    container_name: trino
+    depends_on:
+      - kudu-master
+      - kudu-tserver
+      - namenode
+      - datanode
+      - kafka
+      - metastore
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./etc/catalog:/etc/trino/catalog:ro
+      - hdfs_config_shared_volume:/etc/hdfs-conf:ro
+    networks:
+      - datatower_network

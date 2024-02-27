@@ -1,0 +1,21 @@
+services:
+  schema:
+    image: liumumumumumu/schema-management:0.0.1-beta
+    container_name: schema
+    restart: always
+    networks:
+      - datatower_network
+    volumes:
+      - ./application.yml:/run/application.yml
+    ports:
+      - "9901:9901"
+    environment:
+      APPLICATION_YML_ENV_OPTS: --spring.config.location=/run/application.yml
+    depends_on:
+      - kudu-master
+      - kudu-tserver
+      - namenode
+      - datanode
+      - kafka
+      - metastore
+      - trino

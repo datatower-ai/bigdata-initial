@@ -1,0 +1,42 @@
+services:
+  namenode:
+    image: apache/hadoop:3.3.6
+    container_name: hdfs-namenode
+    hostname: namenode
+    command: ["hdfs", "namenode"]
+    networks:
+      - datatower_network
+    ports:
+      - 9870:9870
+    env_file:
+      - ./config
+    environment:
+      ENSURE_NAMENODE_DIR: "/data/dfs/name"
+    volumes:
+      - hdfs_config_shared_volume:/opt/hadoop/etc/hadoop
+      - hdfs_shared_volume:/opt/hadoop/share/hadoop
+      - namenode-volume:/data
+  datanode:
+    image: apache/hadoop:3.3.6
+    container_name: hdfs-datanode
+    command: ["hdfs", "datanode"]
+    networks:
+      - datatower_network
+    env_file:
+      - ./config
+    volumes:
+      - datanode-volume:/data
+
+volumes:
+  namenode-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HDD_DATA_BASE_DIR}/namenode/
+  datanode-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HDD_DATA_BASE_DIR}/datanode/

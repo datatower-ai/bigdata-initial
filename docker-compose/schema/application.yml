@@ -1,0 +1,27 @@
+server:
+  port: 9901
+kudu:
+  master:
+    hosts: kudu-master:7051
+spring:
+  datasource:
+    mysql:
+      jdbc-url: jdbc:mysql://mysql:3306/datatower?useUnicode=true&characterEncoding=UTF-8&verifyServerCertificate=false&useSSL=false&allowPublicKeyRetrieval=true
+      username: root
+      password: DataTower@2024
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    trino:
+      jdbc-url: jdbc:trino://trino:8080
+      username: admin
+      password:
+      driver-class-name: io.trino.jdbc.TrinoDriver
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+mybatis:
+  config-location: classpath:mybatis-config.xml
+hdfs:
+  namespace: namenode
+companySchemaName: dts_all
+
+

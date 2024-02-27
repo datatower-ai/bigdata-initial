@@ -1,0 +1,23 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    networks:
+      - datatower_network
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: DataTower@2024
+    volumes:
+      - mysql-volume:/var/lib/mysql
+      - ./config:/etc/mysql/conf.d
+      - ./init:/docker-entrypoint-initdb.d
+
+volumes:
+  mysql-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${SSD_DATA_BASE_DIR}/mysql/
